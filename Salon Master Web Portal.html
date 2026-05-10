@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MIRA HAIR STUDIO - Premium Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { 
+            --gold: #d4af37; --dark: #113826; --light: #FDFBF7; --bg: #F2EFE9;
+            --accent-teal: #1e5c41; --line-green: #00B900;
+        }
+        body { font-family: 'Prompt', sans-serif; margin: 0; background: var(--bg); color: var(--dark); overflow-x: hidden; }
+        
+        /* Loader */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--gold); transition: opacity 0.5s ease; }
+        .spinner { border: 4px solid rgba(212, 175, 55, 0.2); border-top: 4px solid var(--gold); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Navbar หลัก */
+        .nav-bar { background: linear-gradient(90deg, #0b261a 0%, #154731 100%); border-bottom: 3px solid var(--gold); padding: 12px 15px; display: flex; gap: 10px; position: sticky; top: 0; z-index: 1000; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; box-shadow: 0 4px 15px rgba(0,0,0,0.3); scrollbar-width: none; }
+        .nav-bar::-webkit-scrollbar { display: none; }
+        .nav-btn { flex-shrink: 0; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-family: 'Prompt'; transition: 0.3s; font-size: 15px; }
+        .nav-btn.active { background: var(--gold); color: var(--dark); font-weight: 600; }
+
+        .container { max-width: 1200px; margin: 15px auto; padding: 10px 15px; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .slide-card { background: var(--light); padding: 25px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(212, 175, 55, 0.2); }
+        .hero-banner { width: 100%; height: auto; max-height: 400px; border-radius: 15px; object-fit: cover; border: 2px solid var(--gold); }
+        
+        /* Promotion Gallery */
+        .promo-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+        .promo-img { width: 260px; height: auto; border-radius: 12px; border: 1px solid #e0d9c8; flex-shrink: 0; object-fit: contain; }
+
+        /* 🌟 ระบบ Sidebar บริการ (New Layout) 🌟 */
+        .service-layout { display: flex; gap: 25px; align-items: flex-start; }
+        
+        /* เมนูหัวข้อด้านข้าง */
+        .service-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; position: sticky; top: 100px; }
+        .side-cat-btn { background: white; border: 1.5px solid #eee; padding: 12px 15px; border-radius: 12px; cursor: pointer; font-family: 'Prompt'; text-align: left; transition: 0.3s; color: #555; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .side-cat-btn:hover { border-color: var(--gold); background: #fdfaf0; }
+        .side-cat-btn.active { background: var(--dark); color: var(--gold); border-color: var(--dark); font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .side-cat-btn i { font-size: 12px; opacity: 0.5; }
+
+        /* พื้นที่แสดงรูปบริการด้านขวา */
+        .service-display { flex-grow: 1; min-width: 0; }
+        .service-content-box { animation: fadeIn 0.4s ease-out; }
+        .service-item-card { background: white; border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: center; }
+        
+        /* ปรับขนาดรูปภาพบริการให้เล็กลงและพอดี */
+        .service-item-card img { width: 90%; max-width: 550px; height: auto; margin: 20px auto; display: block; border-radius: 10px; transition: 0.3s; }
+        .service-item-info { padding: 15px 20px 25px 20px; background: #fafafa; border-top: 1px solid #eee; }
+        .service-item-info h3 { margin: 0 0 5px 0; color: var(--dark); font-size: 20px; }
+        .service-item-info p { margin: 0; color: #777; font-size: 14px; }
+
+        /* Responsive Mobile */
+        @media (max-width: 850px) {
+            .service-layout { flex-direction: column; }
+            .service-sidebar { width: 100%; flex-direction: row; overflow-x: auto; position: static; padding-bottom: 10px; scrollbar-width: none; }
+            .service-sidebar::-webkit-scrollbar { display: none; }
+            .side-cat-btn { white-space: nowrap; flex-shrink: 0; padding: 10px 18px; }
+            .service-item-card img { width: 95%; }
+        }
+
+        /* วิเคราะห์ผม & ติดต่อ (เหมือนเดิม) */
+        .damage-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .damage-tabs::-webkit-scrollbar { display: none; }
+        .d-tab { flex-shrink: 0; padding: 12px 16px; background: #EAE6DE; border: none; border-radius: 10px; cursor: pointer; font-family: 'Prompt'; font-weight: 600; color: #555; }
+        .d-tab.active { background: var(--dark); color: var(--gold); }
+        .damage-content { background: white; padding: 25px; border-radius: 15px; border-left: 6px solid var(--gold); }
+        .visual-img { width: 100%; border-radius: 12px; margin-top: 15px; }
+
+        .booking-contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .contact-card { padding: 30px 15px; border-radius: 20px; text-align: center; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .line-card { background: var(--line-green); color: white; }
+        .phone-card { background: var(--dark); color: var(--gold); border: 2px solid var(--gold); }
+        @media (max-width: 600px) { .booking-contact-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body onload="initApp()">
+
+<div id="loader">
+    <div class="spinner"></div>
+    <h2 style="letter-spacing: 2px;">MIRA HAIR STUDIO</h2>
+    <p style="font-size: 14px; color: #ccc;">กำลังเชื่อมต่อข้อมูล...</p>
+</div>
+
+<div class="nav-bar">
+    <button id="btn-home" class="nav-btn active" onclick="showSection('home')">หน้าแรก</button>
+    <button id="btn-services" class="nav-btn" onclick="showSection('services')">บริการของเรา</button>
+    <button id="btn-customer" class="nav-btn" onclick="showSection('customer')">วิเคราะห์ผม</button>
+    <button id="btn-location" class="nav-btn" onclick="showSection('location')">พิกัดร้าน</button>
+    <button id="btn-booking" class="nav-btn" onclick="showSection('booking')" style="background: var(--gold); color: var(--dark);">จองคิว / ติดต่อ</button>
+</div>
+
+<div class="container">
+    <div id="home" class="section active">
+        <div class="slide-card">
+            <img id="shop-banner" src="" class="hero-banner" onerror="this.src='https://placehold.co/1200x450/113826/d4af37?text=MIRA+HAIR+STUDIO'">
+            <h1 id="shop-name" style="text-align:center; color: var(--gold); margin-bottom: 5px;">MIRA HAIR STUDIO</h1>
+            <p id="about-text" style="text-align:center; color: #666;"></p>
+            
+            <div id="promo-section" style="display: none; margin-top: 25px;">
+                <h3 style="color: var(--dark); margin-bottom: 10px;"><i class="fa-solid fa-star" style="color: var(--gold);"></i> โปรโมชั่นแนะนำ</h3>
+                <div id="promo-gallery" class="promo-scroll"></div>
+            </div>
+
+            <div class="social-container" style="display: flex; justify-content: center; gap: 15px; margin-top: 30px;">
+                <a id="link-fb" class="social-link" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="30"></a>
+                <a id="link-line" class="social-link" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2504/2504922.png" width="30"></a>
+                <a id="link-ig" class="social-link" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="30"></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="services" class="section">
+        <div class="service-layout">
+            <div id="service-sidebar" class="service-sidebar">
+                </div>
+
+            <div id="service-display" class="service-display">
+                <div style="text-align:center; padding: 50px; color: #888;">
+                    <i class="fa-solid fa-hand-sparkles fa-3x" style="margin-bottom:15px; opacity:0.3;"></i>
+                    <p>กรุณาเลือกหมวดหมู่บริการ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customer" class="section">
+        <div class="slide-card">
+            <h2 style="margin-top: 0;">วิเคราะห์สภาพเส้นผม</h2>
+            <div class="damage-tabs">
+                <button class="d-tab active" onclick="showDamage('normal', this)">โครงสร้างปกติ</button>
+                <button class="d-tab" onclick="showDamage('mild', this)">ระดับ 1: แห้งเสีย</button>
+                <button class="d-tab" onclick="showDamage('severe', this)">ระดับ 2: ช็อตกรอบ</button>
+                <button class="d-tab" onclick="showDamage('gummy', this)">ระดับ 3: เปื่อยยุ่ย</button>
+            </div>
+            <div id="damage-content-box" class="damage-content">
+                <h3 id="damage-title" style="color: var(--accent-teal); margin-top: 0;">โครงสร้างเส้นผมปกติ</h3>
+                <p id="damage-desc"></p>
+                <img id="damage-img" src="" class="visual-img">
+            </div>
+        </div>
+    </div>
+
+    <div id="location" class="section">
+        <div class="slide-card">
+            <h2 style="color: var(--gold); margin-top: 0;"><i class="fa-solid fa-map-location-dot"></i> พิกัดร้าน</h2>
+            <p id="shop-address"></p>
+            <p id="shop-hours" style="color: var(--accent-teal);"></p>
+            <div style="height: 350px; border-radius: 15px; overflow: hidden; border: 2px solid var(--gold);">
+                <iframe id="shop-map" width="100%" height="100%" frameborder="0" style="border:0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking" class="section">
+        <div class="slide-card">
+            <h2 style="text-align: center; margin-top: 0;">จองคิว & ติดต่อเรา</h2>
+            <div class="booking-contact-container">
+                <a id="contact-line-main" href="#" target="_blank" class="contact-card line-card">
+                    <i class="fa-brands fa-line fa-3x"></i>
+                    <h3 style="margin:10px 0 0 0;">จองผ่าน LINE</h3>
+                </a>
+                <a id="contact-phone-main" href="#" class="contact-card phone-card">
+                    <i class="fa-solid fa-phone fa-3x"></i>
+                    <h3 id="phone-text-main" style="margin:10px 0 0 0;">โทรติดต่อ</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 🔴 ใส่ลิงก์ API Script ของคุณที่นี่
+    const API_URL = 'https://script.google.com/macros/s/AKfycbynuf5_DcCOs0lCZdCdxSwwYOiwjivskiAp7Hc7Ne2wxpPtyxeasS5NWGS0FtZA1T5ADg/exec';
+
+    let allServices = {}; // เก็บข้อมูลบริการทั้งหมดที่ดึงมา
+
+    const damageData = {
+        'normal': { title: 'โครงสร้างเส้นผมปกติ', color: 'var(--accent-teal)', desc: 'เกล็ดผมภายนอกเรียงตัวปิดสนิท แกนในมีความยืดหยุ่นและแข็งแรง กักเก็บความชุ่มชื้นได้ดี', img: '' },
+        'mild': { title: 'ระดับ 1: ผมเริ่มแห้งเสีย', color: '#f39c12', desc: 'เกล็ดผมเริ่มเปิดอ้าจากการถูกความร้อนหรือทำสี สูญเสียความชุ่มชื้น เริ่มชี้ฟู', img: '' },
+        'severe': { title: 'ระดับ 2: ผมช็อตปลาย', color: '#D35400', desc: 'เกล็ดผมถูกทำลาย สูญเสียโปรตีนเนื้อผม สากกระด้าง แห้งกรอบ', img: '' },
+        'gummy': { title: 'ระดับ 3: ผมเปื่อยยุ่ย', color: '#c0392b', desc: 'ขั้นวิกฤต! แกนในกลายเป็นโพรง ผมยืดหยุ่นเหมือนหนังยางเมื่อเปียกน้ำ', img: '' }
+    };
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.add('active');
+            document.getElementById('btn-' + id).classList.add('active');
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function showDamage(level, btn) {
+        document.querySelectorAll('.d-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('damage-title').innerText = damageData[level].title;
+        document.getElementById('damage-title').style.color = damageData[level].color;
+        document.getElementById('damage-desc').innerText = damageData[level].desc;
+        document.getElementById('damage-img').src = damageData[level].img || 'https://placehold.co/800x400?text=Anatomy';
+    }
+
+    // 🟢 ฟังก์ชันแสดงบริการเมื่อกดเลือกหมวดหมู่
+    function renderCategory(categoryName) {
+        // เปลี่ยนสถานะปุ่ม Active
+        document.querySelectorAll('.side-cat-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        const display = document.getElementById('service-display');
+        let html = `<div class="service-content-box">
+                    <h2 style="color:var(--gold); border-left: 5px solid var(--gold); padding-left: 15px; margin-bottom: 20px;">${categoryName}</h2>`;
+        
+        allServices[categoryName].forEach(item => {
+            html += `
+                <div class="service-item-card">
+                    <img src="${item.image}" alt="${item.name}" onerror="this.src='https://placehold.co/600x800/eee/999?text=Service+Rate'">
+                    <div class="service-item-info">
+                        <h3>${item.name}</h3>
+                        <p>${item.desc}</p>
+                    </div>
+                </div>`;
+        });
+        
+        html += `</div>`;
+        display.innerHTML = html;
+        
+        // ถ้าเป็นมือถือ ให้เลื่อนหน้าจอลงมาดูเนื้อหาหลังจากกดเลือก
+        if(window.innerWidth < 850) {
+            display.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    async function initApp() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            const cfg = data.config;
+            allServices = data.services;
+
+            // อัปเดต Config ร้าน
+            document.getElementById('shop-name').innerText = cfg.shopName || 'MIRA HAIR STUDIO';
+            document.getElementById('about-text').innerText = cfg.aboutUs || '';
+            if(cfg.bannerImg) document.getElementById('shop-banner').src = cfg.bannerImg;
+            if(cfg.fbLink) document.getElementById('link-fb').href = cfg.fbLink;
+            if(cfg.lineLink) {
+                document.getElementById('link-line').href = cfg.lineLink;
+                document.getElementById('contact-line-main').href = cfg.lineLink;
+            }
+            if(cfg.phone) {
+                document.getElementById('contact-phone-main').href = 'tel:' + cfg.phone;
+                document.getElementById('phone-text-main').innerText = 'โทร ' + cfg.phone;
+            }
+            document.getElementById('shop-address').innerText = cfg.address || '';
+            document.getElementById('shop-hours').innerText = 'เปิดบริการ: ' + (cfg.operatingHours || '-');
+            if(cfg.address) document.getElementById('shop-map').src = `https://maps.google.com/maps?q=${encodeURIComponent(cfg.address)}&output=embed`;
+
+            // โปรโมชั่นหน้าแรก
+            if(data.promos && data.promos.length > 0) {
+                document.getElementById('promo-section').style.display = 'block';
+                const gallery = document.getElementById('promo-gallery');
+                data.promos.forEach(url => {
+                    gallery.innerHTML += `<img src="${url}" class="promo-img">`;
+                });
+            }
+
+            // 🟢 สร้าง Sidebar หัวข้อบริการ
+            const sidebar = document.getElementById('service-sidebar');
+            sidebar.innerHTML = '';
+            const categories = Object.keys(allServices);
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'side-cat-btn';
+                btn.innerHTML = `${cat} <i class="fa-solid fa-chevron-right"></i>`;
+                btn.onclick = () => renderCategory(cat);
+                sidebar.appendChild(btn);
+                
+                // แสดงหมวดหมู่แรกเป็นค่าเริ่มต้น
+                if(index === 0) {
+                    btn.click();
+                }
+            });
+
+            // รูปวิเคราะห์ผม
+            if(data.images) {
+                damageData.normal.img = data.images.normal;
+                damageData.mild.img = data.images.mild;
+                damageData.severe.img = data.images.severe;
+                damageData.gummy.img = data.images.gummy;
+            }
+            showDamage('normal', document.querySelector('.d-tab'));
+
+            // ปิด Loader
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+
+        } catch (e) {
+            console.error(e);
+            document.getElementById('loader').innerHTML = "<p style='color:white;'>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>";
+        }
+    }
+</script>
+</body>
+</html>
